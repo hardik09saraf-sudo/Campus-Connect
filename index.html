@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusConnect | Event Management Portal</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="toast" class="toast"></div>
+
+  <header class="topbar">
+    <a class="brand" href="#home" onclick="showPage('home')">
+      <span class="brand-mark">CC</span>
+      <span>Campus<span>Connect</span></span>
+    </a>
+    <nav>
+      <button class="nav-link active" data-page="home" onclick="showPage('home')">Home</button>
+      <button class="nav-link" data-page="events" onclick="showPage('events')">Events</button>
+      <button class="nav-link" data-page="my-events" onclick="showPage('my-events')">My Registrations</button>
+      <button class="nav-link" data-page="admin" onclick="showPage('admin')">Organizer</button>
+    </nav>
+    <button class="mobile-menu" onclick="toggleMobileNav()">☰</button>
+  </header>
+
+  <main>
+    <section id="page-home" class="page active-page">
+      <div class="hero">
+        <div class="hero-copy">
+          <div class="eyebrow">CAMPUS EVENT MANAGEMENT & REGISTRATION</div>
+          <h1>Discover. Register.<br><em>Experience campus.</em></h1>
+          <p>One portal for discovering campus events, registering instantly, tracking your registrations, and managing events.</p>
+          <div class="hero-actions">
+            <button class="primary-btn" onclick="showPage('events')">Explore Events →</button>
+            <button class="ghost-btn" onclick="showPage('admin')">Manage Events</button>
+          </div>
+        </div>
+        <div class="hero-card">
+          <div class="orbit one"></div><div class="orbit two"></div>
+          <div class="hero-icon">🎓</div>
+          <div class="floating-card fc1"><b id="heroEventCount">0</b><small>Live Events</small></div>
+          <div class="floating-card fc2"><b id="heroRegCount">0</b><small>Registrations</small></div>
+          <div class="floating-card fc3"><b>24/7</b><small>Access</small></div>
+        </div>
+      </div>
+
+      <section class="section">
+        <div class="section-head">
+          <div><span class="section-kicker">WHY CAMPUSCONNECT</span><h2>Everything students need</h2></div>
+        </div>
+        <div class="feature-grid">
+          <article class="feature"><span>🔎</span><h3>Find Events</h3><p>Search and filter workshops, competitions, sports, cultural events and more.</p></article>
+          <article class="feature"><span>⚡</span><h3>Instant Registration</h3><p>Register with one click and receive an instant confirmation.</p></article>
+          <article class="feature"><span>🎟️</span><h3>Track Your Seats</h3><p>See registration status and remaining seats in real time on this device.</p></article>
+          <article class="feature"><span>📊</span><h3>Organizer Dashboard</h3><p>Create, edit and remove events while monitoring registrations.</p></article>
+        </div>
+      </section>
+
+      <section class="section tinted">
+        <div class="section-head">
+          <div><span class="section-kicker">UPCOMING</span><h2>Featured events</h2></div>
+          <button class="text-btn" onclick="showPage('events')">View all →</button>
+        </div>
+        <div id="featuredEvents" class="event-grid"></div>
+      </section>
+    </section>
+
+    <section id="page-events" class="page">
+      <div class="page-heading">
+        <span class="section-kicker">CAMPUS CALENDAR</span>
+        <h1>Explore events</h1>
+        <p>Find something that matches your interests and reserve your seat.</p>
+      </div>
+      <div class="controls">
+        <div class="search-wrap">⌕ <input id="searchInput" placeholder="Search events..." oninput="renderEvents()"></div>
+        <select id="categoryFilter" onchange="renderEvents()">
+          <option value="all">All categories</option>
+          <option>Technology</option><option>Cultural</option><option>Sports</option>
+          <option>Workshop</option><option>Competition</option><option>Seminar</option>
+        </select>
+        <select id="sortFilter" onchange="renderEvents()">
+          <option value="date">Sort by date</option><option value="seats">Most seats</option><option value="name">Name A–Z</option>
+        </select>
+      </div>
+      <div id="allEvents" class="event-grid"></div>
+    </section>
+
+    <section id="page-my-events" class="page">
+      <div class="page-heading">
+        <span class="section-kicker">YOUR ACTIVITY</span>
+        <h1>My registrations</h1>
+        <p>All registrations are stored securely in this browser for your project demonstration.</p>
+      </div>
+      <div id="myRegistrations" class="registration-list"></div>
+    </section>
+
+    <section id="page-admin" class="page">
+      <div class="page-heading admin-heading">
+        <div><span class="section-kicker">ORGANIZER CONSOLE</span><h1>Event management</h1><p>Create and manage campus events from one dashboard.</p></div>
+        <button class="primary-btn" onclick="openEventModal()">＋ Create Event</button>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card"><span>Events</span><b id="statEvents">0</b><small>Total listed</small></div>
+        <div class="stat-card"><span>Registrations</span><b id="statRegs">0</b><small>Across all events</small></div>
+        <div class="stat-card"><span>Available Seats</span><b id="statSeats">0</b><small>Currently open</small></div>
+        <div class="stat-card"><span>Categories</span><b id="statCategories">0</b><small>Event types</small></div>
+      </div>
+      <div class="table-card">
+        <div class="table-title"><h2>Manage events</h2><span id="tableCount"></span></div>
+        <div class="table-scroll"><table><thead><tr><th>Event</th><th>Date</th><th>Category</th><th>Seats</th><th>Registrations</th><th>Actions</th></tr></thead><tbody id="adminTable"></tbody></table></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div><b>CampusConnect</b><span>Campus Event Management & Registration Portal</span></div>
+    <span>Built with HTML • CSS • JavaScript</span>
+  </footer>
+
+  <div id="eventModal" class="modal-backdrop">
+    <div class="modal">
+      <button class="close-btn" onclick="closeModal()">×</button>
+      <span class="section-kicker">ORGANIZER</span>
+      <h2 id="modalTitle">Create event</h2>
+      <form id="eventForm" onsubmit="saveEvent(event)">
+        <input type="hidden" id="eventId">
+        <label>Event name<input id="eventName" required placeholder="e.g. AI & Robotics Expo"></label>
+        <div class="form-row">
+          <label>Date<input id="eventDate" type="date" required></label>
+          <label>Time<input id="eventTime" type="time" required></label>
+        </div>
+        <div class="form-row">
+          <label>Category<select id="eventCategory"><option>Technology</option><option>Cultural</option><option>Sports</option><option>Workshop</option><option>Competition</option><option>Seminar</option></select></label>
+          <label>Capacity<input id="eventCapacity" type="number" min="1" required></label>
+        </div>
+        <label>Venue<input id="eventVenue" required placeholder="Main Auditorium"></label>
+        <label>Description<textarea id="eventDescription" rows="3" required placeholder="Tell students about the event..."></textarea></label>
+        <button class="primary-btn full" type="submit">Save Event</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="registerModal" class="modal-backdrop">
+    <div class="modal">
+      <button class="close-btn" onclick="closeRegister()">×</button>
+      <span class="section-kicker">REGISTRATION</span>
+      <h2 id="registerTitle">Register</h2>
+      <p id="registerDetails" class="modal-muted"></p>
+      <form onsubmit="submitRegistration(event)">
+        <input type="hidden" id="registerEventId">
+        <label>Full name<input id="studentName" required placeholder="Your full name"></label>
+        <label>Student email<input id="studentEmail" type="email" required placeholder="student@college.edu"></label>
+        <label>Student ID<input id="studentId" required placeholder="e.g. 123456"></label>
+        <button class="primary-btn full" type="submit">Confirm Registration</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
